@@ -33,33 +33,40 @@ export default function PostPage() {
 
   return (
     <div className="p-4 bg-white dark:bg-gray-800 rounded-2xl shadow-md hover:shadow-lg transition-all duration-300 space-y-2">
-  {post.imageUrl && (
-    <img
-      src={post.imageUrl}
-      alt={post.title}
-      className="w-full h-48 object-cover rounded-xl"
-    />
-  )}
-  <div className="flex flex-wrap gap-2 mt-2">
-    {post.categories.map((cat) => (
-      <span
-        key={cat}
-        className="px-2 py-0.5 bg-gray-100 dark:bg-gray-700 text-xs rounded-full text-gray-700 dark:text-gray-300"
-      >
-        #{cat}
-      </span>
-    ))}
-  </div>
+      {post.imageUrl && (
+        <img
+          src={post.imageUrl}
+          alt={post.title}
+          className="w-full h-48 object-cover rounded-xl"
+        />
+      )}
+      <div className="flex flex-wrap gap-2 mt-2">
+        {post.categories.map((cat) => (
+          <span
+            key={cat}
+            className="px-2 py-0.5 bg-gray-100 dark:bg-gray-700 text-xs rounded-full text-gray-700 dark:text-gray-300"
+          >
+            #{cat}
+          </span>
+        ))}
+      </div>
       <PostContent post={post} />
-       <Link
-        to={`/edit/${post.id}`}
-        className="text-sm text-blue-600 underline hover:text-blue-800 block mb-2"
+      {localStorage.getItem('token') && (
+        <Link
+          to={`/edit/${post.id}`}
+          className="text-sm text-blue-600 underline hover:text-blue-800 block mb-2"
         >
-        ✏️ Düzenle
-       </Link>
-      <button onClick={handleDelete} className="text-sm text-red-600 underline hover:text-red-800">
-        🗑️ Yazıyı Sil
-      </button>
+          ✏️ Düzenle
+        </Link>
+      )}
+      {localStorage.getItem('token') && (
+        <button
+          onClick={handleDelete}
+          className="text-sm text-red-600 underline hover:text-red-800"
+        >
+          🗑️ Yazıyı Sil
+        </button>
+      )}
       <CommentSection postId={post.id} />
     </div>
   );

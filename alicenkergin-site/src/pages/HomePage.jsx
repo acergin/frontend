@@ -23,9 +23,6 @@ export default function HomePage() {
   return (
     <div className="p-6 space-y-6 bg-gray-50 dark:bg-gray-900 dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen">
 
-<div className="bg-gray-50 dark:bg-gray-900 dark:bg-black text-black dark:text-white p-4">
-  Test kutusu: Tema değişiyor mu?
-</div>
       <h1 className="text-3xl font-bold text-gray-800">Tüm Yazılar</h1>
 
       {/* Kategori filtreleme */}

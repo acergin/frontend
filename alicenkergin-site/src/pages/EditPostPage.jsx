@@ -2,13 +2,14 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { getPosts, savePosts } from '../data/posts';
 import PostForm from '../components/PostForm';
 import { getPostById, updatePost } from '../api/posts';
+import { useEffect, useState } from 'react';
 
 export default function EditPostPage() {
   const { id } = useParams();
   const navigate = useNavigate();
-
+  const [post, setPost] = useState(null);
   const posts = getPosts();
-  const post = posts.find((p) => p.id === id);
+  //const post = posts.find((p) => p.id === id);
 
   useEffect(() => {
     getPostById(id).then((data) => setPost(data));
