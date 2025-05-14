@@ -1,18 +1,14 @@
-import { Link } from 'react-router-dom';
+// Navbar.jsx
+import { Link, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 
 export default function Navbar() {
-  const [dark, setDark] = useState(() => {
-    return localStorage.getItem('theme') === 'dark';
-  });
+  const [dark, setDark] = useState(() => localStorage.getItem('theme') === 'dark');
+  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('token'));
+  const navigate = useNavigate();
 
-  // Tema class'ını HTML'ye uygula
   useEffect(() => {
-    if (dark) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
+    document.documentElement.classList.toggle('dark', dark);
   }, [dark]);
 
   const toggleTheme = () => {
@@ -21,9 +17,15 @@ export default function Navbar() {
     localStorage.setItem('theme', newDark ? 'dark' : 'light');
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    setIsLoggedIn(false);
+    navigate('/');
+  };
+
   return (
-    <nav className="bg-white dark:bg-gray-900 shadow-md p-4 mb-6 flex justify-between items-center">
-      <Link to="/" className="text-xl font-semibold text-gray-800 dark:text-white">
+    <nav className="sticky top-0 z-50 bg-white dark:bg-gray-900 shadow-sm p-4 mb-6 flex justify-between items-center transition-all duration-300">
+      <Link to="/" className="text-xl font-bold text-gray-800 dark:text-white">
         alicenkergin.com
       </Link>
       <div className="flex items-center gap-4">
@@ -33,12 +35,29 @@ export default function Navbar() {
         >
           {dark ? '🌞 Aydınlık' : '🌙 Karanlık'}
         </button>
-        <Link
-          to="/new"
-          className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 transition"
-        >
-          + Yazı Ekle
-        </Link>
+        {isLoggedIn ? (
+          <>
+            <Link
+              to="/new"
+              className="bg-blue-600 text-white px-4 py-1.5 rounded-xl hover:bg-blue-700 transition"
+            >
+              + Yazı Ekle
+            </Link>
+            <button
+              onClick={handleLogout}
+              className="text-sm text-red-600 hover:underline"
+            >
+              Çıkış Yap
+            </button>
+          </>
+        ) : (
+          <Link
+            to="/login"
+            className="text-sm text-blue-600 hover:underline"
+          >
+            Giriş Yap
+          </Link>
+        )}
       </div>
     </nav>
   );

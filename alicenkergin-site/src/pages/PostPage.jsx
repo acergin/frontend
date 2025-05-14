@@ -2,18 +2,23 @@
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { getPosts, savePosts } from '../data/posts';
 import CommentSection from '../components/CommentSection';
+import PostContent from '../components/PostContent';
+import { getPostById, deletePost } from '../api/posts';
+import { useEffect, useState } from 'react';
 
 export default function PostPage() {
   const { id } = useParams();
-  const post = getPosts().find((p) => p.id === id);
   const navigate = useNavigate();
+  const [post, setPost] = useState(null);
 
-  const handleDelete = () => {
+  useEffect(() => {
+    getPostById(id).then((data) => setPost(data));
+  }, [id]);
+
+  const handleDelete = async () => {
     const confirmDelete = window.confirm('Bu yazıyı silmek istediğine emin misin?');
     if (!confirmDelete) return;
-  
-    const remainingPosts = getPosts().filter((p) => p.id !== id);
-    savePosts(remainingPosts);
+    await deletePost(id);
     navigate('/');
   };
 
@@ -27,17 +32,35 @@ export default function PostPage() {
   }
 
   return (
-    <div className="p-6 space-y-4 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen">
-      <h1 className="text-3xl font-bold text-gray-800">{post.title}</h1>
-      <button
-  onClick={handleDelete}
-  className="mt-2 text-sm text-red-600 underline hover:text-red-800"
->
-  🗑️ Yazıyı Sil
-</button>
-      <p className="text-sm text-gray-500">{post.date}</p>
-      <p className="text-gray-700 whitespace-pre-line">{post.content}</p>
-      <Link to="/" className="text-blue-600 underline">← Geri dön</Link>
+    <div className="p-4 bg-white dark:bg-gray-800 rounded-2xl shadow-md hover:shadow-lg transition-all duration-300 space-y-2">
+  {post.imageUrl && (
+    <img
+      src={post.imageUrl}
+      alt={post.title}
+      className="w-full h-48 object-cover rounded-xl"
+    />
+  )}
+  <div className="flex flex-wrap gap-2 mt-2">
+    {post.categories.map((cat) => (
+      <span
+        key={cat}
+        className="px-2 py-0.5 bg-gray-100 dark:bg-gray-700 text-xs rounded-full text-gray-700 dark:text-gray-300"
+      >
+        #{cat}
+      </span>
+    ))}
+  </div>
+      <PostContent post={post} />
+       <Link
+        to={`/edit/${post.id}`}
+        className="text-sm text-blue-600 underline hover:text-blue-800 block mb-2"
+        >
+        ✏️ Düzenle
+       </Link>
+      <button onClick={handleDelete} className="text-sm text-red-600 underline hover:text-red-800">
+        🗑️ Yazıyı Sil
+      </button>
+      <CommentSection postId={post.id} />
     </div>
   );
 }
